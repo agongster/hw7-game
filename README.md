@@ -186,19 +186,23 @@ To add a scenery type, write a drawer in the "Scenery" section of `render.js`, a
 2. **Hints can give away solutions.** Red and gold key labels, plus the "A hidden path connects from this angle" tip, reveal part of each puzzle. Players can turn them off with H, but they're on by default. If playtesters find the levels too easy, consider showing gold and red only on Level 1.
 3. **The illusion isn't a true optical illusion.** When a connection is active, a golden path fades in across the gap, but the two ends don't actually line up geometrically in that view. Making them line up (the real Monument Valley effect) would take level design where tile heights overlap on screen at that rotation.
 4. **Halfway through a rotation, the level looks top-down for a moment.** At 45°, an isometric view of a grid looks like a flat map. That's mathematically correct and lasts about 0.1 s, but it can feel abrupt.
-5. **The draw order is approximate.** Everything is sorted by the depth of its centre (painter's algorithm). That's right for flat ground, but tall blocks can overlap neighbours wrongly at some angles. In Level 3 at 90°, part of Sol's golden path is hidden behind the tower. If something looks wrong, this is the likely cause; the fix is to sort per face, or to split tall columns into unit cubes.
-6. **Characters can be hidden behind tall blocks.** Your own key labels are drawn on top, so you can find your own character, but not always your partner's. A fix is to draw a faint silhouette of each character on top of everything.
-7. **Cooperation only goes one way.** Sol helps Luna (plates raise bridges for her), but Luna's gift (mist) never helps Sol. Level design is limited by this: any path Sol can walk, Luna can walk too. A future ability that lets Luna help Sol (e.g. she can rotate a platform, or carry a light that reveals Sol's paths) would make the co-op more mutual.
-8. **Level 2 is gentle on Sol.** He only walks east and waits on the plate, and never needs to rotate. That's intentional for a level that introduces the abilities, but playtesters may find it slow for Player 1.
-9. **Esc goes straight to the title without asking**, and progress in the current level is lost.
-10. **Performance isn't measured.** Each frame builds dozens of canvas gradients (tile sides, halos, motes). It's fine on a laptop in Chrome, but it hasn't been tried on low-end hardware.
-11. **Testing so far:**
-    - `tests/world.test.js` covers the rules, abilities and tips.
-    - `tests/levels.test.js` uses a search-based solver to prove that each level can be solved and that removing any of its mechanics makes it impossible.
-    - A headless-Chrome replay pressed the solver's key sequences through the real game, going title → Level 1 → 2 → 3 → end screen with no falls.
-    - Screenshots were checked for the title, the intro card, the bridge, illusions, level complete, a fall and the end screen.
+5. **The draw order is approximate.** Everything is sorted by the depth of its centre (painter's algorithm). That's right for flat ground, but tall blocks and tall scenery (crystals, monoliths, trees) can overlap neighbours wrongly at some angles. For example, in Level 3 a crystal can be drawn over a character standing just behind it. If something looks wrong, this is the likely cause; the fix is to sort per face, or to split tall columns into unit cubes.
+6. **Scenery is drawn as upright sprites.** Trees, crystals and so on face the screen and don't turn with the view, which is a deliberate stylistic choice. They also can't be walked behind properly (see item 5).
+7. **Characters can be hidden behind tall blocks or scenery.** Your own key labels are drawn on top, so you can find your own character, but not always your partner's. Zooming in helps. A fix is to draw a faint silhouette of each character on top of everything.
+8. **Zoom can crop your partner or the goal out of view.** At high zoom the camera follows *your* character, so your partner, or a ring across the map, can be off-screen. Zoom out (Z or [) to see the whole level.
+9. **Cooperation only goes one way.** Sol helps Luna (plates raise bridges for her), but Luna's gift (mist) never helps Sol. Level design is limited by this: any path Sol can walk, Luna can walk too. A future ability that lets Luna help Sol (e.g. she can rotate a platform, or carry a light that reveals Sol's paths) would make the co-op more mutual.
+10. **The background doesn't rotate.** Hills, pines and planets are a shared backdrop for both halves; only the level turns.
+11. **Esc goes straight to the title without asking**, and progress in the current level is lost.
+12. **Performance needs a watch.** Each frame builds dozens of canvas gradients (tile sides, halos, glows, motes). The cosmos nebulae were so expensive in headless Chrome, which has no GPU, that screenshots stalled. They are now drawn once into an offscreen canvas (`cachedLayer()` in `screens.js`). Other large soft glows could be cached the same way if frame rates drop on slower machines. Nothing has been measured on real hardware.
+13. **Testing so far:**
+    - `tests/world.test.js` uses small test-only levels to cover the rules, stairs, solid scenery, abilities and tips.
+    - `tests/levels.test.js` uses a search-based solver to prove that each level can be solved and that removing any of its mechanics (each connection, each plate, the mist, the stairs) makes it impossible. It also checks that solid scenery never covers anything a player must stand on.
+    - A headless-Chrome replay pressed the solver's key sequences through the real game (plus zoom keys), going title → Level 1 → 2 → 3 → end screen with no falls.
+    - Screenshots were checked for all three themed levels, a zoomed view and the title.
 
     **Not yet done:**
     - Nobody has played it with two real people.
     - Nobody has listened to the sounds; headless Chrome has no audio output.
     - It hasn't been run in Safari or Firefox.
+    - Scroll-to-zoom hasn't been tried with a real mouse or trackpad.
+    - The game hasn't been watched in motion. Every screenshot was a frozen moment.
