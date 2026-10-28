@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eclipse</title>
+  <!-- Optional web font; the game falls back to system fonts when offline. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;600;700&display=swap">
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #241d45; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Plain scripts (not ES modules) so the game runs straight from file:// -->
+  <!-- Order matters: later files use globals defined by earlier ones. -->
+  <script src="src/levels.js"></script>
+  <script src="src/world.js"></script>
+  <script src="src/input.js"></script>
+  <script src="src/animation.js"></script>
+  <script src="src/tutorial.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/effects.js"></script>
+  <script src="src/render.js"></script>
+  <script src="src/screens.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
